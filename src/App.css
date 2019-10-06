@@ -1,0 +1,28 @@
+.main-clock {
+  font-size: 275px;
+  margin: auto;
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
+.weather-icon {
+  margin: auto;
+  width: 20%;
+  float: left;
+}
+
+.weather-icon-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.temperature {
+  padding-left: 5px;
+}
+
+.temperature-low {
+  color: grey;
+}
