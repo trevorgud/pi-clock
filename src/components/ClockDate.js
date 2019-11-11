@@ -1,6 +1,9 @@
 import React from 'react';
 
-export default class Clock extends React.Component {
+import ClockDisplay from './ClockDisplay';
+import DateDisplay from './DateDisplay';
+
+export default class ClockDate extends React.Component {
   constructor(props) {
     super(props);
     this.state = { date: new Date() };
@@ -20,9 +23,10 @@ export default class Clock extends React.Component {
 
   render() {
     return (
-      <div className="main-clock">{
-        this.state.date.toLocaleTimeString().split(":").slice(0, 2).join(":")
-      }</div>
+      <div>
+        <ClockDisplay date={this.state.date}></ClockDisplay>
+        <DateDisplay date={this.state.date}></DateDisplay>
+      </div>
     );
   }
 }

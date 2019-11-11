@@ -1,6 +1,17 @@
 .main-clock {
   font-size: 275px;
   margin: auto;
+  margin-top: -30px;
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
+.main-date {
+  font-size: 50px;
+  margin: auto;
+  margin-top: -30px;
+  margin-bottom: 30px;
   float: left;
   width: 100%;
   text-align: center;
@@ -15,12 +26,14 @@
 .weather-icon-center {
   display: block;
   margin-left: auto;
+  margin-top: -10px;
   margin-right: auto;
   text-align: center;
 }
 
 .temperature {
   padding-left: 5px;
+  font-size: 24px;
 }
 
 .temperature-low {

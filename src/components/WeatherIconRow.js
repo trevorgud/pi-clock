@@ -36,10 +36,18 @@ export default class WeatherIconRow extends React.Component {
   axiosGet() {
     axios
       .get(`${apiPrefix}${currentWeatherUrl}`, { params: apiParams })
-      .then((response) => { this.setState({ currentWeatherData: response.data }); });
+      .then((response) => { this.setState({ currentWeatherData: response.data }); })
+      .catch(() => {
+        console.log("Unable to access weather API");
+        this.setState({ currentWeatherData: null });
+      });
     axios
       .get(`${apiPrefix}${forecastWeatherUrl}`, { params: apiParams })
-      .then((response) => { this.setState({ forecastWeatherData: response.data }); });
+      .then((response) => { this.setState({ forecastWeatherData: response.data }); })
+      .catch(() => {
+        console.log("Unable to access weather API");
+        this.setState({ forecastWeatherData: null });
+      });
   }
 
   /** Get the forecast items for the specified day. Ex: 1 days ahead is tomorrow. */

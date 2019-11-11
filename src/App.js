@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.css';
 
-import Clock from './components/Clock';
+import ClockDate from './components/ClockDate';
 import WeatherIconRow from './components/WeatherIconRow';
 
 export default function App() {
   return (
     <div className="App">
-      <Clock />
+      <ClockDate />
       <WeatherIconRow />
     </div>
   );
