@@ -1,14 +1,16 @@
 # pi-clock
 Raspberry pi web based clock, built with React.
+The clock is designed for a screen at least 800x480px resolution (standard 7" pi touchscreen).
 
 Install dependencies:
 ```
 sudo apt-get install xdotool unclutter sed docker.io
 ```
 
-Build the docker image (from project root):
+Before building, create the .env file with API key and location info. Reference .env-example
+Then build the docker image (from project root):
 ```
-sudo docker build . -f ./Dockerfile -t pi-clock
+docker build . -f ./Dockerfile -t pi-clock
 ```
 
 Create the docker container to auto start on boot:

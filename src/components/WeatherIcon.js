@@ -1,6 +1,6 @@
 import React from 'react';
 
-/** A weather icon with a title, weather icon image, and temperature. (Optional high/low temp). */
+/** A weather icon with a title, weather icon image, temperature, and pollution. (Optional high/low temp). */
 export default function WeatherIcon(props) {
   return (
     <div className="weather-icon">
@@ -11,6 +11,9 @@ export default function WeatherIcon(props) {
         { props.lowTemp !== undefined &&
           <span className="temperature temperature-low">{props.lowTemp}&deg;</span>
         }
+      </div>
+      <div className="pollution-text-center">
+        <span className="pollution">{props.pollutionText}</span>
       </div>
     </div>
   );
