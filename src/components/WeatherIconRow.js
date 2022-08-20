@@ -190,6 +190,7 @@ export default class WeatherIconRow extends React.Component {
 
   /** Given some pollution metrics, return them in textual format. */
   pollutionText(metrics) {
+    if(!metrics) return '';
     return Object.entries(pollutionThresholds)
       .filter(([key, value]) => metrics[key] && metrics[key] >= value) // Check that key exists and surpasses threshold
       .sort(([aKey, aValue], [bKey, bValue]) => {
