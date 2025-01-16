@@ -6,14 +6,7 @@ import daysOfWeek from './daysOfWeek';
 
 const apiKey = `${process.env.REACT_APP_WEATHER_API_KEY}`;
 
-// TODO: Consider using geolocation web API here.
-const lat = `${process.env.REACT_APP_WEATHER_API_LAT}`;
-const lon = `${process.env.REACT_APP_WEATHER_API_LON}`;
-
-const baseParams = { lat, lon, APPID: apiKey };
-const weatherParams = { ...baseParams, units: 'imperial' };
-const pollutionParams = baseParams;
-
+const geoApiUrl = 'https://ipapi.co/json';
 const apiPrefix = 'https://api.openweathermap.org';
 const resourcePrefix = 'https://openweathermap.org';
 
@@ -22,6 +15,7 @@ const forecastWeatherUrl = '/data/2.5/forecast';
 const currentPollutionUrl = '/data/2.5/air_pollution';
 const forecastPollutionUrl = '/data/2.5/air_pollution/forecast';
 
+const geoRetryMillis = 60 * 1000;
 const queryIntervalMillis = 5 * 60 * 1000;
 const firstForecastThresholdSecs = 1 * 60 * 60;
 
@@ -43,46 +37,102 @@ export default class WeatherIconRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      geo: {
+        lat: null,
+        lon: null,
+      },
       currentWeatherData: null,
       forecastWeatherData: null,
       currentPollutionData: null,
       forecastPollutionData: null
     };
-    this.axiosGet();
-    // Periodically update the weather state data.
-    setInterval(() => { this.axiosGet(); }, queryIntervalMillis);
+  }
+
+  componentDidMount() {
+    this.startApis();
+  }
+
+  startApis() {
+    // Fetch and store the latitude and longitude before doing anything else.
+    // Retry until we can successfully get the geolocation.
+    axios
+      .get(geoApiUrl)
+      .then((response) => {
+        this.setState(
+          {
+            geo: {
+              lat: response.data.latitude,
+              lon: response.data.longitude,
+            }
+          },
+          // Use the setState callback to ensure API calls can access updated state, avoid race conditions.
+          () => {
+            this.axiosGet();
+            // Periodically update the weather state data.
+            setInterval(() => { this.axiosGet(); }, queryIntervalMillis);
+          }
+        )
+      })
+      .catch((e) => {
+        console.error('Failed to fetch location:', e);
+        this.scheduleStartupRetry()
+      });
+  }
+
+  scheduleStartupRetry = () => {
+    // Try to startup again after a brief timeout.
+    this.retryTimeout = setTimeout(() => {
+      console.log('Retrying location fetch...');
+      this.startApis();
+    }, geoRetryMillis);
   }
 
   /** Query the weather API and update the state holding the weather data. */
   axiosGet() {
     axios
-      .get(`${apiPrefix}${currentWeatherUrl}`, { params: weatherParams })
+      .get(`${apiPrefix}${currentWeatherUrl}`, { params: this.weatherParams() })
       .then((response) => { this.setState({ currentWeatherData: response.data }); })
       .catch((e) => {
         console.log(`Unable to access weather API: ${e.toString}`);
         this.setState({ currentWeatherData: null });
       });
     axios
-      .get(`${apiPrefix}${forecastWeatherUrl}`, { params: weatherParams })
+      .get(`${apiPrefix}${forecastWeatherUrl}`, { params: this.weatherParams() })
       .then((response) => { this.setState({ forecastWeatherData: response.data }); })
       .catch((e) => {
         console.log(`Unable to access weather forecast API: ${e.toString()}`);
         this.setState({ forecastWeatherData: null });
       });
     axios
-      .get(`${apiPrefix}${currentPollutionUrl}`, { params: pollutionParams })
+      .get(`${apiPrefix}${currentPollutionUrl}`, { params: this.pollutionParams() })
       .then((response) => { this.setState({ currentPollutionData: response.data.list[0] }); })
       .catch((e) => {
         console.log(`Unable to access pollution API: ${e.toString()}`);
         this.setState({ currentPollutionData: null });
       });
     axios
-      .get(`${apiPrefix}${forecastPollutionUrl}`, { params: pollutionParams })
+      .get(`${apiPrefix}${forecastPollutionUrl}`, { params: this.pollutionParams() })
       .then((response) => { this.setState({ forecastPollutionData: response.data }); })
       .catch((e) => {
         console.log(`Unable to access pollution forecast API: ${e.toString()}`);
         this.setState({ forecastPollutionData: null });
       });
+  }
+
+  baseParams() {
+    return {
+      lat: this.state.geo.lat,
+      lon: this.state.geo.lon,
+      APPID: apiKey
+    };
+  }
+
+  weatherParams() {
+    return { ...this.baseParams(), units: 'imperial' };
+  }
+
+  pollutionParams() {
+    return this.baseParams();
   }
 
   /** Get the forecast items for the specified day. Ex: 1 days ahead is tomorrow. */
