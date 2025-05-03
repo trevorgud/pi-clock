@@ -1,0 +1,11 @@
+services:
+  ipapi-proxy:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ipapi-cache:/data
+    restart: unless-stopped
+
+volumes:
+  ipapi-cache:

@@ -6,7 +6,9 @@ import daysOfWeek from './daysOfWeek';
 
 const apiKey = `${process.env.REACT_APP_WEATHER_API_KEY}`;
 
-const geoApiUrl = 'https://ipapi.co/json';
+// const geoApiUrl = 'https://ipapi.co/json';
+// Now using a local proxy:
+const geoApiUrl = 'http://localhost:8000/geoip';
 const apiPrefix = 'https://api.openweathermap.org';
 const resourcePrefix = 'https://openweathermap.org';
 
