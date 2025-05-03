@@ -1,10 +1,15 @@
 services:
   ipapi-proxy:
-    build: .
+    build: ./geoip
     ports:
       - "8000:8000"
     volumes:
       - ipapi-cache:/data
+    restart: unless-stopped
+  pi-clock:
+    build: ./clock
+    ports:
+      - "80:80"
     restart: unless-stopped
 
 volumes:

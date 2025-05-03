@@ -12,19 +12,15 @@ Install dependencies:
 sudo apt-get install xdotool unclutter sed docker.io
 ```
 
-Before building, create the .env file with API key and location info. Reference .env-example \
-Then build the docker image (from project root):
-```shell
-docker build . -f ./Dockerfile -t pi-clock
-```
+Before building, create the clock/.env file with API key. Reference clock/.env-example
 
-Create the docker container to auto start on boot:
+Build and run from project root:
 ```shell
-docker run -d \
-  -p 80:80 \
-  --name=pi-clock \
-  --restart=always \
-  pi-clock
+docker compose up --build -d
+```
+Bring down, if needed (deletes geoip cache):
+```shell
+docker compose down -v
 ```
 
 Move the file `kiosk/kiosk.sh` to `/home/pi/kiosk.sh`
